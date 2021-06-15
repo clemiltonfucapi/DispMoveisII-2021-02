@@ -1,7 +1,7 @@
 # Firebase - Conceitos
-Slide: 
-Authentication: https://firebase.google.com/products/auth?hl=pt
-Firestore: https://firebase.google.com/products/firestore?hl=pt
+- Slide: https://drive.google.com/file/d/1zw4e1KMf-u16LiqTfzwpXJ856-zvC7vn/view?usp=sharing
+- Authentication: https://firebase.google.com/products/auth?hl=pt
+- Firestore: https://firebase.google.com/products/firestore?hl=pt
 Storage: https://firebase.google.com/products/storage?hl=pt
 # Configurando um projeto no Firebase
 - Crie um novo projeto no Firebase (necessário estar logado em um conta google): https://console.firebase.google.com/
