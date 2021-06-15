@@ -1,7 +1,7 @@
 # Git e Github
 
 ## Teoria: https://blog.rocketseat.com.br/iniciando-com-git-github/
-
+## Estados dos arquivos git: https://medium.com/@devmasterteam/git-ebook-8808f7301054
 ## Prática no Terminal
 - Abra o aplicativo ``Git Bash``. Esse utilitário pode ser instalado através do site: https://git-scm.com/downloads
 - Configure o usuário e o e-mail com que os commits serao registrados. Isso será usado na hora de enviar as alterações para nuvem(github):
@@ -93,3 +93,6 @@
     - Verifique como irá ficar o arquivo README.md na opção PREVIEW
 - Realize o commit pelo site:
     - ![Images](imgs/print24.png)
+- Como realizamos a alteração do repositório online, o repositorio local ficou desatualizado. Para resolver este problema utilize o comando ``git pull``
+    - ![Images](imgs/print25.png)
+
