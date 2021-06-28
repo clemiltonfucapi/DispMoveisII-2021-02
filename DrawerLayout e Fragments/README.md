@@ -81,6 +81,7 @@ dependencies{
             android:layout_height="match_parent"
             >
             <LinearLayout
+                android:id="@+id/nav_toolbar"
                 android:layout_width="0dp"
                 android:layout_height="?actionBarSize"
                 android:background="@color/colorPrimary"
@@ -126,11 +127,12 @@ dependencies{
             android:id="@+id/nav_menu_lista_imagens"
             android:title="Lista de Imagens" />
         <item
-            android:id="@+id/nav_menu_cadastro_imagem"
+            android:id="@+id/nav_menu_storage"
             android:title="Cadastro de Imagens" />
     </menu>
     ```
 - Adicione a ``NavigationView`` no DrawerLayout. Ela deve ficar após o Constraint Layout
+- ``activity_navigation.xml``:
     ```xml
     .....
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -228,3 +230,209 @@ dependencies{
     ```
     - Execute o app. Ele deve ficar da seguinte maneira:
     - ![](imgs/img03.png)
+# Adicionando Fragments
+- Vamos adicionar 3 Fragments() no projeto: 
+    - New > Fragments > Fragment(List)
+    - ![Image](imgs/img05.png)
+    - Modifique os TextView's de cada layout de fragment.
+    - ``fragment_main.xml``:
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.MainFragment">
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="MAIN" />
+    </FrameLayout>
+    ```
+    - ``fragment_storage.xml``
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.StorageFragment">
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="STORAGE" />
+    </FrameLayout>
+    ```    
+    - ``fragment_uploads.xml``
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.UploadsFragment">
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="UPLOADS" />
+    </FrameLayout>
+    ```
+# Navigation
+- O Navigation é um componente que faz parte do Jetpack.
+- O Navigation consiste de três partes principais:
+    - NavGraph: é um XML que centraliza as informações de navegação de uma feature.
+    - NavHost: é um contêiner vazio que mostra destinos do gráfico de navegação. O componente de navegação contém uma implementação NavHostpadrão, NavHostFragment, que mostra os destinos do fragmento.
+    - NavController: é um objeto que gerencia a navegação do aplicativo em um NavHost. O NavController organiza a troca do conteúdo de destino no NavHost conforme os usuários se movem pelo aplicativo.
+- Fonte: https://movile.blog/como-usar-o-jetpack-navigation-em-projetos-de-varios-modulos/ 
+- Documentação: https://developer.android.com/guide/navigation
+# NavGraph, NavHost e NavController
+- Adicione um ``NavHostFragment`` em ``activity_navigation.xml``. Este componente será utilizado para receber as diferentes fragments selecionadas
+- ``activity_navigation.xml``
+    ```xml
+    .....
+            </LinearLayout>
+            <!-- ADICIONE AQUI!!! -->
+            <fragment
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/nav_host_fragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nav_toolbar"
+                app:navGraph="@navigation/nav_graph"
+                />
+            <!-- ********************** -->
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_navigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:menu="@menu/navigation_menu"
+            app:headerLayout="@layout/layout_nav_header"
+            android:layout_gravity="start"
+        />
+    </androidx.drawerlayout.widget.DrawerLayout>
+    ```
+- Adicione um nova pasta em ``res/navigation`` com o arquivo ``nav_graph.xml``.
+    - ![](imgs/img06.png)
+- Neste arquivo vamos criar uma lista de nós do tipo ``<fragment>`` onde irá representar cada ``Fragment`` criada.
+- Os ``id's`` de cada ``<fragment>`` deve ser igual ao dos itens de menu(``navigation_menu.xml``)
+- ``nav_graph.xml``:
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/nav_graph"
+        app:startDestination="@id/nav_menu_main">
+
+        <fragment
+            android:id="@+id/nav_menu_main"
+            android:name="com.clemilton.firebaseappsala.fragment.MainFragment"
+            tools:layout="@layout/fragment_main"
+            />
+        <fragment
+            android:id="@+id/nav_menu_lista_imagens"
+            tools:layout="@layout/fragment_uploads"
+            android:name="com.clemilton.firebaseappsala.fragment.UploadsFragment"
+            />
+        <fragment
+            android:id="@+id/nav_menu_storage"
+            tools:layout="@layout/fragment_storage"
+            android:name="com.clemilton.firebaseappsala.fragment.StorageFragment"
+            />
+    </navigation>
+    ```
+
+- Agora vamos criar um ``NavController`` que permite a navegação pelas fragments
+```java
+public class NavigationActivity extends AppCompatActivity {
+    ......
+    btnMenu.setOnClickListener( view -> {
+        drawerLayout.openDrawer(GravityCompat.START);
+    });
+
+    //Navigation View Menu
+    NavigationView navigationView = findViewById(R.id.nav_navigationView);
+    
+    //NavController
+    NavController navController = Navigation.findNavController(this,R.id.nav_host_fragment);
+
+    // Configura um NavigationView para usar como NavController
+    NavigationUI.setupWithNavController(navigationView,navController);
+}
+```
+# StorageFragment
+- Vamos configurar o StorageFragment com as mesmas funcionalidades de StorageActivity.java
+- Copie o Layout de ``activity_storage.xml`` para ``fragment_storage.xml``
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.StorageFragment">
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <ImageView
+            android:id="@+id/storage_image_cel"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/celular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/storage_edit_nome" />
+        <Button
+            android:id="@+id/storage_btn_upload"
+            style="@style/FormStyle"
+            android:layout_marginTop="24dp"
+            android:text="Upload"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/storage_image_cel" />
+        <EditText
+            android:id="@+id/storage_edit_nome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:hint="Digite o nome da imagem"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@+id/storage_btn_galeria"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageButton
+            android:id="@+id/storage_btn_galeria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_gallery_24dp"
+            app:layout_constraintEnd_toStartOf="@+id/storage_btn_camera"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/storage_edit_nome"
+            app:layout_constraintTop_toTopOf="@+id/storage_edit_nome" />
+        <ImageButton
+            android:id="@+id/storage_btn_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_camera_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/storage_btn_galeria"
+            app:layout_constraintTop_toTopOf="@+id/storage_btn_galeria" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
+```
